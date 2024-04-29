@@ -49,3 +49,19 @@ def pytest_generate_tests(metafunc):
         # Modify parameters to fit test functions' expectations
         modified_parameters = [(a, b, op_name if 'operation_name' in metafunc.fixturenames else op_func, expected) for a, b, op_name, op_func, expected in parameters]
         metafunc.parametrize("a,b,operation,expected", modified_parameters)
+# tests/conftest.py
+import pytest
+from faker import Faker
+
+@pytest.fixture
+def fake_data():
+    fake = Faker()
+    return {
+        'a': fake.random_int(),
+        'b': fake.random_int(),
+        'operation': fake.random_element(elements=('add', 'subtract', 'multiply', 'divide')),
+        'expected_result': 'some_expected_result'  # Implement based on operation
+    }
+
+def pytest_addoption(parser):
+    parser.addoption("--num_records", action="store", default=10, help="Number of records to generate for testing.")
